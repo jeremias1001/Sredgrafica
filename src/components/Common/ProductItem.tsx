@@ -10,6 +10,7 @@ import { updateproductDetails } from "@/redux/features/product-details";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
 import Link from "next/link";
+import { formatCLP } from "@/utils/format";
 
 const ProductItem = ({ item }: { item: Product }) => {
   const { openModal } = useModalContext();
@@ -87,7 +88,7 @@ const ProductItem = ({ item }: { item: Product }) => {
             onClick={() => handleAddToCart()}
             className="inline-flex font-medium text-custom-sm py-[7px] px-5 rounded-[5px] bg-blue text-white ease-out duration-200 hover:bg-blue-dark"
           >
-            Add to cart
+            Agregar al carrito
           </button>
 
           <button
@@ -152,6 +153,7 @@ const ProductItem = ({ item }: { item: Product }) => {
         <p className="text-custom-sm">({item.reviews})</p>
       </div>
 
+      <p className="text-sm text-dark-4 mb-2">{item.category}</p>
       <h3
         className="font-medium text-dark ease-out duration-200 hover:text-blue mb-1.5"
         onClick={() => handleProductDetails()}
@@ -160,8 +162,14 @@ const ProductItem = ({ item }: { item: Product }) => {
       </h3>
 
       <span className="flex items-center gap-2 font-medium text-lg">
-        <span className="text-dark">${item.discountedPrice}</span>
-        <span className="text-dark-4 line-through">${item.price}</span>
+        {item.discountedPrice ? (
+          <>
+            <span className="text-dark">{formatCLP(item.discountedPrice)}</span>
+            <span className="text-dark-4 line-through">{formatCLP(item.price)}</span>
+          </>
+        ) : (
+          <span className="text-dark">{formatCLP(item.price)}</span>
+        )}
       </span>
     </div>
   );

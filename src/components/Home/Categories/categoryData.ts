@@ -1,43 +1,43 @@
 const data = [
   {
-    title: "Televisions",
+    title: "Web & Landings",
     id: 1,
-    img: "/images/categories/categories-01.png",
+    img: "/images/products/web-1.svg",
   },
   {
-    title: "Laptop & PC",
+    title: "Branding",
     id: 2,
-    img: "/images/categories/categories-02.png",
+    img: "/images/products/brand-1.svg",
   },
   {
-    title: "Mobile & Tablets",
+    title: "Social Media",
     id: 3,
-    img: "/images/categories/categories-03.png",
+    img: "/images/products/social-1.svg",
   },
   {
-    title: "Games & Videos",
+    title: "Ads Management",
     id: 4,
-    img: "/images/categories/categories-04.png",
+    img: "/images/products/ads-1.svg",
   },
   {
-    title: "Home Appliances",
+    title: "Content & Copy",
     id: 5,
-    img: "/images/categories/categories-05.png",
+    img: "/images/products/content-1.svg",
   },
   {
-    title: "Health & Sports",
+    title: "Automation",
     id: 6,
-    img: "/images/categories/categories-06.png",
+    img: "/images/products/auto-1.svg",
   },
   {
-    title: "Watches",
+    title: "Audits",
     id: 7,
-    img: "/images/categories/categories-07.png",
+    img: "/images/products/audit-1.svg",
   },
   {
-    title: "Televisions",
+    title: "Turnkey Packs",
     id: 8,
-    img: "/images/categories/categories-04.png",
+    img: "/images/products/pack-1.svg",
   },
 ];
 
