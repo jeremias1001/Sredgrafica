@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Globe, Palette, Share2, Target, FileText, Search, Package,
-    Check, Plus, ShoppingCart, X, ArrowRight, Sparkles, Code, Zap
+    Check, Plus, ShoppingCart, X, ArrowRight, Sparkles, Code, Zap, MessageCircle
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -36,6 +36,8 @@ export default function ServiceBuilder() {
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isBrandyOpen, setIsBrandyOpen] = useState(false);
     const [brandyDiscount, setBrandyDiscount] = useState(0);
+    const [showBanner, setShowBanner] = useState(true);
+    const [lastScrollY, setLastScrollY] = useState(0);
 
     // Load cart from localStorage on mount
     // Load cart from URL or localStorage on mount
@@ -84,6 +86,28 @@ export default function ServiceBuilder() {
         }
         return () => { document.body.style.overflow = "unset"; };
     }, [selectedCategory]);
+
+    // Auto-hide banner on scroll down, show on scroll up
+    useEffect(() => {
+        const handleScroll = () => {
+            const currentScrollY = window.scrollY;
+            
+            if (currentScrollY < 50) {
+                setShowBanner(true);
+            } else if (currentScrollY > lastScrollY) {
+                // Scrolling down
+                setShowBanner(false);
+            } else {
+                // Scrolling up
+                setShowBanner(true);
+            }
+            
+            setLastScrollY(currentScrollY);
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [lastScrollY]);
 
     const addToCart = (service: Service, category: ServiceCategory) => {
         const exists = cart.find(item => item.id === service.id);
@@ -244,26 +268,33 @@ export default function ServiceBuilder() {
                                         {discountPercent > 0 ? (
                                             <div className={`rounded-xl p-3 mb-4 text-center border-2 ${
                                                 brandyDiscount > 0 
-                                                    ? 'bg-purple-100/20 border-purple-400' 
+                                                    ? 'bg-[#1E73BE]/10 border-[#1E73BE]' 
                                                     : 'bg-[#F7941D]/10 border-[#F7941D]'
                                             }`}>
-                                                <span className={`font-bold ${brandyDiscount > 0 ? 'text-purple-600' : 'text-[#F7941D]'}`}>
-                                                    🎉 ¡{discountPercent}% OFF aplicado!
+                                                <span className={`font-bold ${brandyDiscount > 0 ? 'text-[#1E73BE]' : 'text-[#F7941D]'} flex items-center justify-center gap-2`}>
+                                                    <Sparkles className="w-5 h-5" />
+                                                    ¡{discountPercent}% OFF aplicado!
                                                 </span>
-                                                <span className="text-black/60 text-sm block">
+                                                <span className="text-black/70 text-sm block font-medium mt-1">
                                                     {brandyDiscount > 0 
-                                                        ? `✨ Brandy te ayudó a ahorrar ${formatCLP(discountAmount)}`
+                                                        ? `Brandy te ayudó a ahorrar ${formatCLP(discountAmount)}`
                                                         : `Por ${cart.length} servicios en tu pack`
                                                     }
                                                 </span>
                                             </div>
                                         ) : cart.length === 1 ? (
                                             <div className="bg-[#1E73BE]/10 border border-[#1E73BE]/30 rounded-xl p-3 mb-4 text-center">
-                                                <span className="text-[#1E73BE] font-bold text-sm">💡 ¡Añade más servicios para obtener descuento!</span>
+                                                <span className="text-[#1E73BE] font-bold text-sm flex items-center gap-2 justify-center">
+                                                    <Zap className="w-4 h-4" />
+                                                    ¡Añade más servicios para obtener descuento!
+                                                </span>
                                             </div>
                                         ) : cart.length < 4 ? (
                                             <div className="bg-[#1E73BE]/10 border border-[#1E73BE]/30 rounded-xl p-3 mb-4 text-center">
-                                                <span className="text-[#1E73BE] font-bold text-sm">💡 ¡Añade {4 - cart.length} servicio(s) más y obtén 10% OFF!</span>
+                                                <span className="text-[#1E73BE] font-bold text-sm flex items-center gap-2 justify-center">
+                                                    <Zap className="w-4 h-4" />
+                                                    ¡Añade {4 - cart.length} servicio(s) más y obtén 10% OFF!
+                                                </span>
                                             </div>
                                         ) : null}
 
@@ -278,11 +309,11 @@ export default function ServiceBuilder() {
                                             {discountPercent > 0 && (
                                                 <>
                                                     <div className={`flex items-center justify-between ${
-                                                        brandyDiscount > 0 ? 'text-purple-600' : 'text-[#F7941D]'
+                                                        brandyDiscount > 0 ? 'text-[#1E73BE]' : 'text-[#F7941D]'
                                                     }`}>
                                                         <span className="font-mono text-sm">
                                                             Descuento ({discountPercent}%)
-                                                            {brandyDiscount > 0 && <span className="ml-1 text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">Brandy ✨</span>}
+                                                            {brandyDiscount > 0 && <span className="ml-1 text-xs bg-[#1E73BE]/20 text-[#1E73BE] px-2 py-0.5 rounded">Brandy</span>}
                                                         </span>
                                                         <span className="font-bold">-{formatCLP(discountAmount)}</span>
                                                     </div>
@@ -292,32 +323,15 @@ export default function ServiceBuilder() {
                                                     </div>
                                                 </>
                                             )}
-                                            {discountPercent === 0 && (
-                                                <div className="flex items-end justify-between">
-                                                    <span className="text-black/60 font-mono font-bold uppercase tracking-wider text-sm">Total</span>
-                                                    <span className="text-3xl font-sans font-black text-black tracking-tight">{formatCLP(totalPrice)}</span>
-                                                </div>
-                                            )}
+                                            <Button
+                                                variant="outline"
+                                                className="w-full mt-3 border-dashed border-2 border-black/20 hover:border-[#FAFAFA] hover:text-[#FAFAFA] hover:bg-[#F7941D] font-mono text-sm py-6 rounded-xl transition-all"
+                                                onClick={shareCart}
+                                            >
+                                                <Share2 className="w-4 h-4 mr-2" />
+                                                Compartir mi Pack
+                                            </Button>
                                         </div>
-                                        <Button
-                                            onClick={() => {
-                                                const message = `Hola Red Gráfica! 👋 Quiero cotizar este pack:\n\n${cart.map(c => `• ${c.title} (${formatCLP(c.price)})`).join('\n')}\n\n*Total: ${formatCLP(finalPrice)}*${discountPercent > 0 ? ` (inc. ${discountPercent}% OFF)` : ''}`;
-                                                window.open(`https://wa.me/56912345678?text=${encodeURIComponent(message)}`, '_blank');
-                                            }}
-                                            className="w-full bg-[#1E73BE] text-white hover:bg-[#F7941D] font-bold text-lg py-7 rounded-full border-2 border-[#1E73BE] hover:border-[#F7941D] transition-all shadow-[4px_4px_0px_0px_rgba(30,115,190,0.3)] hover:shadow-none active:scale-[0.98]"
-                                        >
-                                            <span className="text-white">CONTINUAR AL PAGO</span>
-                                            <ArrowRight className="w-5 h-5 ml-2 text-white" />
-                                        </Button>
-                                        <Button
-                                            variant="outline"
-                                            className="w-full mt-3 border-dashed border-2 border-black/20 hover:border-[#FAFAFA] hover:text-[#FAFAFA] hover:bg-[#F7941D] font-mono text-sm py-6 rounded-xl transition-all"
-                                            onClick={shareCart}
-                                        >
-                                            <Share2 className="w-4 h-4 mr-2" />
-                                            Compartir mi Pack
-                                        </Button>
-                                        <TrustBadges />
                                     </div>
                                 )}
                             </div>
@@ -325,6 +339,43 @@ export default function ServiceBuilder() {
                     </Sheet>
                 </div>
             </nav>
+
+            {/* Banner CTA con IA - Sticky y sobrio con auto-hide */}
+            {!isBrandyOpen && (
+                <motion.div
+                    initial={{ opacity: 0, y: -20 }}
+                    animate={{ 
+                        opacity: showBanner ? 1 : 0, 
+                        y: showBanner ? 0 : -100 
+                    }}
+                    transition={{ duration: 0.3 }}
+                    className="sticky top-[73px] z-30 bg-[#1E73BE] text-white py-4 px-6 border-b-4 border-[#F7941D] shadow-lg"
+                    style={{ pointerEvents: showBanner ? 'auto' : 'none' }}
+                >
+                    <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+                        <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-2xl bg-white/15 border border-white/40 flex items-center justify-center">
+                                <Sparkles className="w-6 h-6 text-[#F7941D]" />
+                            </div>
+                            <div>
+                                <p className="font-bold text-base md:text-lg uppercase tracking-wide">
+                                    Personaliza tu pack con Brandy
+                                </p>
+                                <p className="text-white/80 text-sm font-mono">
+                                    Abre la pestaña lateral y comparte tu visión; la IA combina servicios y desbloquea descuentos.
+                                </p>
+                            </div>
+                        </div>
+                        <Button
+                            onClick={() => setIsBrandyOpen(true)}
+                            className="bg-white text-[#1E73BE] hover:bg-[#F7941D] hover:text-white font-bold rounded-full px-6 py-3 transition-all border-2 border-white hover:border-[#F7941D] whitespace-nowrap"
+                        >
+                            <MessageCircle className="w-5 h-5 mr-2" />
+                            Abrir pestaña Brandy
+                        </Button>
+                    </div>
+                </motion.div>
+            )}
 
             {/* Builder Header - Clean & Minimal */}
             <section className="relative py-16 lg:py-24 text-center px-6">
@@ -555,15 +606,17 @@ export default function ServiceBuilder() {
             />
 
             {/* Brandy Toggle Button */}
-            <motion.button
-                whileHover={{ scale: 1.1 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => setIsBrandyOpen(true)}
-                className="fixed bottom-6 left-6 z-40 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full p-4 shadow-2xl hover:shadow-3xl transition-all"
-                title="Habla con Brandy, tu asistente de IA"
-            >
-                <Sparkles className="w-6 h-6" />
-            </motion.button>
+            {!isBrandyOpen && (
+                <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    onClick={() => setIsBrandyOpen(true)}
+                    className="fixed bottom-24 left-6 z-50 bg-gradient-to-r from-[#1E73BE] via-[#1E73BE]/80 to-[#F7941D] text-white rounded-full p-4 shadow-[0_20px_40px_rgba(30,115,190,0.3)] transition-all"
+                    title="Chatea con Brandy, tu asistente de IA"
+                >
+                    <Sparkles className="w-6 h-6" />
+                </motion.button>
+            )}
         </div>
     );
 }

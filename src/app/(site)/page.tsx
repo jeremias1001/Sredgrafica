@@ -3,7 +3,7 @@
 import { motion, useInView } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import {
   ArrowRight, Star, Zap, CheckCircle, ShieldCheck,
   Sparkles, Users, Award, TrendingUp, MessageSquare, Quote
@@ -13,6 +13,7 @@ import WhatsAppButton from "@/components/Common/WhatsAppButton";
 import CountdownBanner from "@/components/Common/CountdownBanner";
 import ExitIntentPopup from "@/components/Common/ExitIntentPopup";
 import FAQSection from "@/components/Common/FAQSection";
+import Brandy from "@/components/Brandy";
 
 // Animated Counter Component
 const AnimatedNumber = ({ value, suffix = "" }: { value: number; suffix?: string }) => {
@@ -81,6 +82,9 @@ const ProcessStep = ({ number, title, description }: { number: string; title: st
 );
 
 export default function HomePage() {
+  const [isBrandyOpen, setIsBrandyOpen] = useState(false);
+  const [brandyDiscount, setBrandyDiscount] = useState(0);
+
   return (
     <div className="min-h-screen bg-white text-black selection:bg-[#1E73BE]/20 selection:text-black font-sans overflow-x-hidden relative">
 
@@ -121,7 +125,7 @@ export default function HomePage() {
             <Link href="#nosotros" className="font-mono text-sm text-black/70 hover:text-black transition-colors">Nosotros</Link>
           </div>
 
-          <Link href="/inicio">
+          <Link href="/servicios">
             <Button className="bg-[#1E73BE] text-white hover:bg-[#F7941D] font-bold rounded-full px-6 transition-all border-2 border-[#1E73BE] hover:border-[#F7941D]">
               Comenzar
               <ArrowRight className="ml-2 w-4 h-4" />
@@ -167,15 +171,19 @@ export default function HomePage() {
                 </p>
 
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Link href="/inicio">
-                    <Button size="lg" className="bg-[#1E73BE] text-white hover:bg-[#F7941D] rounded-full px-10 py-7 text-lg font-bold transition-all border-2 border-[#1E73BE] hover:border-[#F7941D] shadow-[4px_4px_0px_0px_rgba(30,115,190,0.3)] hover:shadow-none">
-                      Armar mi Proyecto
+                  <Button 
+                    size="lg" 
+                    onClick={() => setIsBrandyOpen(true)}
+                    className="bg-[#1E73BE] text-white hover:bg-[#F7941D] rounded-full px-10 py-7 text-lg font-bold transition-all border-2 border-[#1E73BE] hover:border-[#F7941D]"
+                  >
+                    Arma tu proyecto con IA
+                  </Button>
+                  <Link href="/servicios">
+                    <Button size="lg" variant="outline" className="rounded-full px-10 py-7 text-lg font-bold border-2 border-black text-black hover:bg-black hover:text-white transition-all bg-white">
+                      Ver Catálogo Completo
                       <ArrowRight className="ml-2 w-5 h-5" />
                     </Button>
                   </Link>
-                  <Button size="lg" variant="outline" className="rounded-full px-10 py-7 text-lg font-bold border-2 border-black text-black hover:bg-black hover:text-white transition-all bg-white">
-                    Ver Portafolio
-                  </Button>
                 </div>
 
                 {/* Social Proof */}
@@ -303,6 +311,93 @@ export default function HomePage() {
             />
           </div>
         </div>
+      </section>
+
+      {/* CTA INTERMEDIO - BRANDY IA */}
+      <section className="py-20 px-6 bg-gradient-to-r from-[#1E73BE] via-[#1E73BE]/70 to-[#F7941D] relative overflow-hidden">
+        {/* Animated background */}
+        <div className="absolute inset-0 opacity-20">
+          <div className="absolute inset-0" style={{
+            backgroundImage: `radial-gradient(circle at 2px 2px, white 1px, transparent 0)`,
+            backgroundSize: '40px 40px'
+          }} />
+        </div>
+
+        <div className="container mx-auto relative z-10">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="max-w-4xl mx-auto text-center"
+          >
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-xl px-4 py-2 rounded-full mb-6 border border-white/30">
+              <Sparkles className="w-4 h-4 text-white" />
+              <span className="font-mono text-xs font-bold uppercase tracking-wider text-white">Asistente IA Disponible 24/7</span>
+            </div>
+
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-display font-black text-white mb-6 leading-tight">
+              <span className="inline-flex items-center gap-3 flex-wrap justify-center">
+                <Sparkles className="w-12 h-12 text-[#F7941D]" />
+                <span className="text-[#F7941D]">Brandy</span> arma tu proyecto
+              </span>
+              <br />
+              <span className="text-3xl md:text-4xl text-white">en minutos, no en días</span>
+            </h2>
+            
+            <p className="text-xl text-white/90 mb-4 max-w-2xl mx-auto font-mono leading-relaxed">
+              Nuestra IA analiza tu negocio, recomienda servicios y calcula descuentos automáticamente.
+            </p>
+            <div className="flex items-center justify-center gap-3 mb-8">
+              <div className="bg-[#F7941D]/20 p-3 rounded-2xl backdrop-blur-xl">
+                <Star className="w-8 h-8 text-[#F7941D] fill-[#F7941D]" />
+              </div>
+              <p className="text-2xl font-bold text-white">
+                Hasta <span className="text-[#F7941D]">20% de descuento</span> en packs completos
+              </p>
+            </div>
+
+            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-12">
+              <Button
+                size="lg"
+                onClick={() => setIsBrandyOpen(true)}
+                className="bg-white text-[#1E73BE] hover:bg-[#F7941D] hover:text-white rounded-full px-12 py-7 text-lg font-bold transition-all border-2 border-white hover:border-[#F7941D]"
+              >
+                <Sparkles className="mr-2 w-5 h-5 group-hover:rotate-12 transition-transform" />
+                Hablar con Brandy (Gratis)
+              </Button>
+
+              <div className="flex items-center gap-2 text-white font-bold text-sm bg-white/20 backdrop-blur-xl px-4 py-3 rounded-full border-2 border-white/40">
+                <CheckCircle className="w-5 h-5 text-[#1E73BE]" />
+                <span>Sin tarjeta • Sin compromiso</span>
+              </div>
+            </div>
+
+            {/* Mini features */}
+            <div className="grid sm:grid-cols-3 gap-4 max-w-3xl mx-auto mb-8">
+              {[
+                { icon: Zap, text: "Respuestas en menos de 3 segundos" },
+                { icon: Star, text: "Descuentos automáticos hasta 20%" },
+                { icon: MessageSquare, text: "Entiende tu negocio al instante" },
+              ].map((item, i) => (
+                <div key={i} className="bg-white/10 backdrop-blur-xl rounded-2xl p-5 border border-white/20 hover:bg-white/20 transition-all">
+                  <item.icon className="w-7 h-7 text-[#F7941D] mx-auto mb-3" strokeWidth={2.3} />
+                  <p className="text-white/90 text-sm font-bold font-mono">{item.text}</p>
+                </div>
+              ))}
+            </div>
+
+            {/* Social proof mini */}
+            <div className="flex items-center justify-center gap-2 text-white/90 text-sm font-mono">
+              <Users className="w-5 h-5" />
+              <span>Ya ayudó a más de 50+ negocios a ahorrar miles</span>
+            </div>
+          </motion.div>
+        </div>
+
+        {/* Decorative elements */}
+        <div className="absolute top-10 right-10 w-32 h-32 bg-white/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-10 left-10 w-40 h-40 bg-[#F7941D]/20 rounded-full blur-3xl" />
       </section>
 
       {/* 4. STATS - Minimal */}
@@ -485,7 +580,7 @@ export default function HomePage() {
             <p className="text-lg mb-12 max-w-xl mx-auto font-mono" style={{ color: 'rgba(255,255,255,0.8)' }}>
               Deja de perder clientes por una imagen amateur.
             </p>
-            <Link href="/inicio">
+            <Link href="/servicios">
               <Button size="lg" className="bg-[#F7941D] text-black hover:bg-white rounded-full px-12 py-8 text-xl font-bold border-2 border-[#F7941D] hover:border-white transition-all">
                 <span className="text-black font-bold">COMENZAR PROYECTO</span>
                 <ArrowRight className="ml-2 w-6 h-6 text-black" />
@@ -524,6 +619,52 @@ export default function HomePage() {
 
       {/* WhatsApp Button */}
       <WhatsAppButton phoneNumber="56912345678" />
+
+      {/* Brandy AI Assistant */}
+      <Brandy
+        isOpen={isBrandyOpen}
+        onClose={() => setIsBrandyOpen(false)}
+        onApplyDiscount={(discount) => setBrandyDiscount(discount)}
+      />
+
+      {/* Brandy Toggle Button - Derecha abajo con icono mejorado */}
+      <motion.button
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        onClick={() => setIsBrandyOpen(true)}
+        className="fixed bottom-6 right-6 z-50 bg-gradient-to-br from-[#1E73BE] via-[#1E73BE]/80 to-[#F7941D] text-white rounded-full p-5 shadow-[0_10px_30px_rgba(30,115,190,0.3)] transition-all group border-2 border-white"
+        title="Chatea con Brandy - IA que arma tu proyecto"
+      >
+        <div className="relative flex items-center justify-center">
+          <Sparkles className="w-6 h-6" strokeWidth={2} />
+          <div className="absolute inset-0 rounded-full border border-white/60" />
+        </div>
+        
+        {/* Pulse Animation */}
+        <span className="absolute inset-0 rounded-full bg-gradient-to-br from-[#1E73BE] to-[#F7941D] animate-ping opacity-30" />
+        
+        {/* Badge con oferta - más visible */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.25, type: "spring" }}
+          className="absolute -top-3 -right-3 bg-gradient-to-r from-[#F7941D] to-[#ff8c3d] text-white text-xs font-black px-3 py-1.5 rounded-full border-2 border-white flex items-center gap-1"
+        >
+          <Star className="w-3 h-3 fill-white" />
+          20%
+        </motion.div>
+        
+        {/* Texto flotante */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="absolute right-full mr-4 top-1/2 -translate-y-1/2 bg-white text-[#1E73BE] px-4 py-2 rounded-xl shadow-lg font-bold text-sm whitespace-nowrap hidden md:group-hover:block border-2 border-[#1E73BE]"
+        >
+          Habla con Brandy
+        </motion.div>
+      </motion.button>
     </div >
   );
 }

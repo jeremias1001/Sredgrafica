@@ -2,18 +2,26 @@ name = "redgrafica-store"
 type = "javascript"
 account_id = ""
 workers_dev = true
-route = ""
-zone_id = ""
+compatibility_date = "2024-12-16"
+compatibility_flags = ["nodejs_compat"]
 
 # Cloudflare Pages configuration
-pages_build_output_dir = ".next"
+pages_build_output_dir = ".next/standalone"
 
-env = { production = { name = "redgrafica-store-prod" } }
+[build]
+command = "npm run build"
+cwd = "./"
+watch_paths = ["src/**/*.ts", "src/**/*.tsx"]
 
-# Build command that Next.js will use
 [env.production]
-build = { command = "npm run build" }
+name = "redgrafica-store-prod"
+routes = []
 
-# Environment variables
 [env.production.vars]
 NODE_ENV = "production"
+Cerebras_api_key = ""
+EVOLUTION_API_URL = ""
+EVOLUTION_API_KEY = ""
+EVOLUTION_INSTANCE_NAME = "redgrafica"
+RESEND_API_KEY = ""
+EMAIL_FROM = "noreply@redgrafica.com"
