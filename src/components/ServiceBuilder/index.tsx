@@ -24,6 +24,7 @@ import ExitIntentPopup from "@/components/Common/ExitIntentPopup";
 import ValueStack from "@/components/Common/ValueStack";
 import TrustBadges from "@/components/Common/TrustBadges";
 import StickyCTA from "@/components/Common/StickyCTA";
+import Brandy from "@/components/Brandy";
 
 const iconMap: Record<string, React.ElementType> = {
     Globe, Palette, Share2, Target, FileText, Search, Package, Code, Zap,
@@ -33,6 +34,8 @@ export default function ServiceBuilder() {
     const [selectedCategory, setSelectedCategory] = useState<ServiceCategory | null>(null);
     const [cart, setCart] = useState<CartService[]>([]);
     const [isCartOpen, setIsCartOpen] = useState(false);
+    const [isBrandyOpen, setIsBrandyOpen] = useState(false);
+    const [brandyDiscount, setBrandyDiscount] = useState(0);
 
     // Load cart from localStorage on mount
     // Load cart from URL or localStorage on mount
@@ -101,7 +104,32 @@ export default function ServiceBuilder() {
     };
 
     const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
-    const discountPercent = cart.length >= 5 ? 20 : cart.length >= 3 ? 15 : 0;
+    
+    // Cálculo de descuento dinámico basado en múltiples criterios
+    const calculateDiscount = () => {
+        let discount = 0;
+        
+        // Criterio 1: Por cantidad de servicios
+        if (cart.length >= 10) discount = Math.max(discount, 20);
+        else if (cart.length >= 7) discount = Math.max(discount, 15);
+        else if (cart.length >= 4) discount = Math.max(discount, 10);
+        else if (cart.length >= 2) discount = Math.max(discount, 5);
+        
+        // Criterio 2: Por monto total
+        if (totalPrice >= 2000000) discount = Math.max(discount, 20);
+        else if (totalPrice >= 1500000) discount = Math.max(discount, 15);
+        else if (totalPrice >= 1000000) discount = Math.max(discount, 12);
+        else if (totalPrice >= 500000) discount = Math.max(discount, 10);
+        
+        // Criterio 3: Descuento de Brandy (puede ser hasta 20%)
+        discount = Math.max(discount, brandyDiscount);
+        
+        // Máximo descuento: 20%
+        return Math.min(discount, 20);
+    };
+    
+    const baseDiscount = calculateDiscount();
+    const discountPercent = baseDiscount;
     const discountAmount = Math.round(totalPrice * (discountPercent / 100));
     const finalPrice = totalPrice - discountAmount;
     const isInCart = (serviceId: number) => cart.some(item => item.id === serviceId);
@@ -214,13 +242,28 @@ export default function ServiceBuilder() {
 
                                         {/* Discount Banner */}
                                         {discountPercent > 0 ? (
-                                            <div className="bg-[#F7941D]/10 border-2 border-[#F7941D] rounded-xl p-3 mb-4 text-center">
-                                                <span className="text-[#F7941D] font-bold">🎉 ¡{discountPercent}% OFF aplicado!</span>
-                                                <span className="text-black/60 text-sm block">Por combinar {cart.length} servicios</span>
+                                            <div className={`rounded-xl p-3 mb-4 text-center border-2 ${
+                                                brandyDiscount > 0 
+                                                    ? 'bg-purple-100/20 border-purple-400' 
+                                                    : 'bg-[#F7941D]/10 border-[#F7941D]'
+                                            }`}>
+                                                <span className={`font-bold ${brandyDiscount > 0 ? 'text-purple-600' : 'text-[#F7941D]'}`}>
+                                                    🎉 ¡{discountPercent}% OFF aplicado!
+                                                </span>
+                                                <span className="text-black/60 text-sm block">
+                                                    {brandyDiscount > 0 
+                                                        ? `✨ Brandy te ayudó a ahorrar ${formatCLP(discountAmount)}`
+                                                        : `Por ${cart.length} servicios en tu pack`
+                                                    }
+                                                </span>
                                             </div>
-                                        ) : cart.length === 2 ? (
+                                        ) : cart.length === 1 ? (
                                             <div className="bg-[#1E73BE]/10 border border-[#1E73BE]/30 rounded-xl p-3 mb-4 text-center">
-                                                <span className="text-[#1E73BE] font-bold text-sm">💡 ¡Añade 1 servicio más y obtén 15% OFF!</span>
+                                                <span className="text-[#1E73BE] font-bold text-sm">💡 ¡Añade más servicios para obtener descuento!</span>
+                                            </div>
+                                        ) : cart.length < 4 ? (
+                                            <div className="bg-[#1E73BE]/10 border border-[#1E73BE]/30 rounded-xl p-3 mb-4 text-center">
+                                                <span className="text-[#1E73BE] font-bold text-sm">💡 ¡Añade {4 - cart.length} servicio(s) más y obtén 10% OFF!</span>
                                             </div>
                                         ) : null}
 
@@ -234,8 +277,13 @@ export default function ServiceBuilder() {
                                             </div>
                                             {discountPercent > 0 && (
                                                 <>
-                                                    <div className="flex items-center justify-between text-[#F7941D]">
-                                                        <span className="font-mono text-sm">Descuento ({discountPercent}%)</span>
+                                                    <div className={`flex items-center justify-between ${
+                                                        brandyDiscount > 0 ? 'text-purple-600' : 'text-[#F7941D]'
+                                                    }`}>
+                                                        <span className="font-mono text-sm">
+                                                            Descuento ({discountPercent}%)
+                                                            {brandyDiscount > 0 && <span className="ml-1 text-xs bg-purple-100 text-purple-700 px-2 py-0.5 rounded">Brandy ✨</span>}
+                                                        </span>
                                                         <span className="font-bold">-{formatCLP(discountAmount)}</span>
                                                     </div>
                                                     <div className="border-t border-black/10 pt-2 flex items-end justify-between">
@@ -498,6 +546,24 @@ export default function ServiceBuilder() {
                 totalPrice={finalPrice}
                 onClick={() => setIsCartOpen(true)}
             />
+
+            {/* Brandy AI Assistant */}
+            <Brandy
+                isOpen={isBrandyOpen}
+                onClose={() => setIsBrandyOpen(false)}
+                onApplyDiscount={(discount) => setBrandyDiscount(discount)}
+            />
+
+            {/* Brandy Toggle Button */}
+            <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setIsBrandyOpen(true)}
+                className="fixed bottom-6 left-6 z-40 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-full p-4 shadow-2xl hover:shadow-3xl transition-all"
+                title="Habla con Brandy, tu asistente de IA"
+            >
+                <Sparkles className="w-6 h-6" />
+            </motion.button>
         </div>
     );
 }
