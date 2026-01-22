@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
     Globe, Palette, Share2, Target, FileText, Search, Package,
-    Check, Plus, ShoppingCart, X, ArrowRight, Sparkles
+    Check, Plus, ShoppingCart, X, ArrowRight, Sparkles, Code, Zap
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -26,7 +26,7 @@ import TrustBadges from "@/components/Common/TrustBadges";
 import StickyCTA from "@/components/Common/StickyCTA";
 
 const iconMap: Record<string, React.ElementType> = {
-    Globe, Palette, Share2, Target, FileText, Search, Package,
+    Globe, Palette, Share2, Target, FileText, Search, Package, Code, Zap,
 };
 
 export default function ServiceBuilder() {
