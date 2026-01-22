@@ -1,0 +1,19 @@
+name = "redgrafica-store"
+type = "javascript"
+account_id = ""
+workers_dev = true
+route = ""
+zone_id = ""
+
+# Cloudflare Pages configuration
+pages_build_output_dir = ".next"
+
+env = { production = { name = "redgrafica-store-prod" } }
+
+# Build command that Next.js will use
+[env.production]
+build = { command = "npm run build" }
+
+# Environment variables
+[env.production.vars]
+NODE_ENV = "production"
